@@ -18,16 +18,16 @@ class GameSprite(sprite.Sprite):
 class Rocet(GameSprite):
     def rocet_left(self):
         keys = key.get_pressed()
-        if keys[K_w]:
+        if keys[K_w] and self.rect.y > -150:
             self.rect.y -= self.speed
-        if keys[K_s]:
+        if keys[K_s] and self.rect.y < win_height - 75: 
             self.rect.y += self.speed 
 
     def rocet_right(self):
         keys = key.get_pressed()
-        if keys[K_UP]:
+        if keys[K_UP] and self.rect.y > -150:
             self.rect.y -= self.speed
-        if keys[K_DOWN]:
+        if keys[K_DOWN] and self.rect.y < win_height - 75: 
             self.rect.y += self.speed 
 
 
@@ -47,13 +47,14 @@ class Rocet(GameSprite):
 #             lost += 1
 
 win_width = 700
-win_height = 530
+win_height = 600
 window = display.set_mode((win_width, win_height))
 display.set_caption('pin_pong')
 background = transform.scale(image.load('sky.jpg'), (win_width, win_height))
 
 z = 10
-plaer = Rocet('rocket.png', 100, 435, z, 60, 80)
+plaer_left = Rocet('rocket.png', 50, 0, z, 60, 200)
+plaer_right = Rocet('rocket.png', (win_width - 110), 0, z, 60, 200)
 
 game = True
 finish = False
@@ -72,8 +73,10 @@ while game:
 
     window.blit(background, (0 ,0))
 
-    plaer.update()
-    plaer.reset()
+    plaer_left.reset()
+    plaer_right.reset()
+    plaer_left.rocet_left()
+    plaer_right.rocet_right()
 
     clock.tick(FPS)
     display.update()
