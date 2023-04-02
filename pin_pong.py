@@ -49,6 +49,7 @@ class Ball(sprite.Sprite):
         self.rect.y += self.speed_y
 
 
+
 win_width = 700
 win_height = 600
 window = display.set_mode((win_width, win_height))
@@ -72,6 +73,8 @@ font1 = font.SysFont('Arial', 80)
 win = font1.render('YOU WIN!', True, (255, 255, 255))
 lose = font1.render('YOU LOSE!', True, (180, 0, 0))
 
+x = 1
+y = 1
 while game:
     for e in event.get():
         if e.type == QUIT:
@@ -85,19 +88,22 @@ while game:
     ball.move()
 
     if sprite.collide_rect(plaer_left, ball) or sprite.collide_rect(plaer_right, ball):
-        ball.speed_x *= -(randint(1, 3))
-        ball.speed_y *= (randint(1, 3))
+        ball.speed_x *= -1
+        ball.speed_y *= 1
     
     if ball.rect.y > win_height-50 or ball.rect.y < 0:
-        ball.speed_y *= -1
+        ball.speed_y /= -1
 
     if ball.rect.x < 0 or ball.rect.x > win_width:
         finish = True
         window.blit(lose, (200, 200))
 
+
+
     plaer_left.reset()
     plaer_right.reset()
     ball.reset()
 
+    
     clock.tick(FPS)
     display.update()
