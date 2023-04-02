@@ -1,5 +1,6 @@
 from pygame import *
 from random import randint
+from random import randint
 mixer.init()
 font.init()
 
@@ -30,21 +31,23 @@ class Rocet(GameSprite):
         if keys[K_DOWN] and self.rect.y < win_height - 75: 
             self.rect.y += self.speed 
 
+class Ball(sprite.Sprite):
+    def __init__(self, player_image, plaer_x, plaer_y, plaer_speed_x, plaer_speed_y, rect_with, rect_height):
+        super().__init__()
+        self.image = transform.scale(image.load(player_image), (rect_with, rect_height))
+        self.speed_x = plaer_speed_x
+        self.speed_y = plaer_speed_y
+        self.rect = self.image.get_rect()
+        self.rect.x = plaer_x
+        self.rect.y = plaer_y
 
-    # def fire(self):
-    #     bullet = Bullet('bullet.png', self.rect.centerx, self.rect.top, -15, 15, 20)
-    #     bullets.add(bullet)
-    #     global score
-    #     score += 1
+    def reset(self):
+        window.blit(self.image, (self.rect.x, self.rect.y))
 
-# class Enemy(GameSprite):
-#     def update(self):
-#         self.rect.y += self.speed
-#         global lost
-#         if self.rect.y > win_height:
-#             self.rect.x = randint(80, win_width-80)
-#             self.rect.y = 0
-#             lost += 1
+    def move(self):
+        self.rect.x += self.speed_x
+        self.rect.y += self.speed_y
+
 
 win_width = 700
 win_height = 600
@@ -55,6 +58,9 @@ background = transform.scale(image.load('sky.jpg'), (win_width, win_height))
 z = 10
 plaer_left = Rocet('rocket.png', 50, 0, z, 60, 200)
 plaer_right = Rocet('rocket.png', (win_width - 110), 0, z, 60, 200)
+
+b = 2
+ball = Ball('ball.png', (win_height/2), (win_width/2), b, b, 60, 60)
 
 game = True
 finish = False
@@ -73,10 +79,25 @@ while game:
 
     window.blit(background, (0 ,0))
 
-    plaer_left.reset()
-    plaer_right.reset()
+    
     plaer_left.rocet_left()
     plaer_right.rocet_right()
+    ball.move()
+
+    if sprite.collide_rect(plaer_left, ball) or sprite.collide_rect(plaer_right, ball):
+        ball.speed_x *= -(randint(1, 3))
+        ball.speed_y *= (randint(1, 3))
+    
+    if ball.rect.y > win_height-50 or ball.rect.y < 0:
+        ball.speed_y *= -1
+
+    if ball.rect.x < 0 or ball.rect.x > win_width:
+        finish = True
+        window.blit(lose, (200, 200))
+
+    plaer_left.reset()
+    plaer_right.reset()
+    ball.reset()
 
     clock.tick(FPS)
     display.update()
